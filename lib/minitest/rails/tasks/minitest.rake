@@ -1,5 +1,17 @@
 require 'rake/testtask'
-require 'rails/test_unit/sub_test_task'
+
+if ::Rails.version.to_f >= 3.2
+  require 'rails/test_unit/sub_test_task'
+else
+  module Rails
+    # Silence the default description to cut down on `rake -T` noise.
+    class SubTestTask < Rake::TestTask
+      def desc(string)
+        # Ignore the description.
+      end
+    end
+  end
+end
 
 TASKS = %w(models controllers helpers mailers acceptance) #views
 MINITEST_TASKS = TASKS.map { |sub| "minitest:#{sub}" }
